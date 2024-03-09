@@ -16,6 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TESTS BAD, DO NOT USE FOR TESTING
 func TestSaveHandler(t *testing.T) {
 	cases := []struct {
 		name      string
