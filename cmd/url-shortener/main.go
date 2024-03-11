@@ -9,6 +9,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/mozzarella12321/orders-api/internal/config"
+	deleteUrl "github.com/mozzarella12321/orders-api/internal/http-server/handlers/delete"
+	"github.com/mozzarella12321/orders-api/internal/http-server/handlers/redirect"
 	"github.com/mozzarella12321/orders-api/internal/http-server/handlers/url/save"
 	"github.com/mozzarella12321/orders-api/internal/http-server/middleware/logger"
 	"github.com/mozzarella12321/orders-api/internal/lib/logger/sl"
@@ -40,8 +42,10 @@ func main() {
 	router.Use(logger.New(log))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
-	router.Post("/url", save.New(log, storage))
 
+	router.Post("/url", save.New(log, storage))
+	router.Get("/{alias}", redirect.New(log, storage))
+	router.Delete("/{alias}", deleteUrl.New(log, storage))
 	log.Info("starting server", slog.String("address", cfg.Address))
 
 	srv := &http.Server{
@@ -76,7 +80,6 @@ func setupLogger(env string) *slog.Logger {
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
 		)
 	}
-
 	return log
 }
 
